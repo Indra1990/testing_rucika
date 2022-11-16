@@ -1,6 +1,7 @@
 # go-testing-rucika
-
-
+ for testing customer
+ - email : "test@test.com"
+ - pass : "123456"
 
 ## Getting started
 
