@@ -1,0 +1,161 @@
+{
+	"info": {
+		"_postman_id": "6b982993-c0aa-4ce5-8787-416cffc427d1",
+		"name": "order",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4498006"
+	},
+	"item": [
+		{
+			"name": "create-order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0b21lcl9pZCI6MiwiZXhwIjoxNjY4NjEyMjM3fQ.Y7WdnLuW-wZvM6VWLQ2s_KqhY3uBIoj6SvGLQxJnDlU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\" : \"test 2\",\n    \"note\" : \"test  2 dong\",\n    \"orderDetails\" :[\n        {\n            \"item\": \"Sempak\",\n            \"qty\": \"2\",\n            \"price\": \"50000\"\n        },\n        {\n            \"item\": \"Singlet\",\n            \"qty\": \"10\",\n            \"price\": \"50000\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/order/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"order",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "detail-order",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/order/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"order",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list-order",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/order?start_date=2022-11-14&end_date=2022-11-14",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"order"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "start_date",
+							"value": "2022-11-14"
+						},
+						{
+							"key": "end_date",
+							"value": "2022-11-14"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update-order",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0b21lcl9pZCI6MiwiZXhwIjoxNjY4NjE0NjcyfQ.L94EIa0fiuI3bC8BbtTXEQRw_F6i_brYc6d3C8t6fFU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\" : \"test 2\",\n    \"note\" : \"test  2 dong\",\n    \"orderDetails\" :[\n        {\n            \"item\": \"Sempak\",\n            \"qty\": \"2\",\n            \"price\": \"50000\"\n        },\n        {\n            \"item\": \"Singlet\",\n            \"qty\": \"15\",\n            \"price\": \"50000\"\n        }\n        \n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/order/update/7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"order",
+						"update",
+						"7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete-order",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/order/delete/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"order",
+						"delete",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

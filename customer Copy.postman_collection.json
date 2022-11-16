@@ -1,0 +1,153 @@
+{
+	"info": {
+		"_postman_id": "808a366f-f240-47b4-b134-57f31ab2a4bb",
+		"name": "customer Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4498006"
+	},
+	"item": [
+		{
+			"name": "create-customer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"test2\",\n    \"email\" : \"test2@test.com\",\n    \"password\" : \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/customer/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"customer",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list-customer",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0b21lcl9pZCI6MiwiZXhwIjoxNjY4NjEyMjM3fQ.Y7WdnLuW-wZvM6VWLQ2s_KqhY3uBIoj6SvGLQxJnDlU",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/api/customer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"customer"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "detail-customer",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0b21lcl9pZCI6MSwiZXhwIjoxNjY4NTk5MjExfQ.gap9HKaEHMPspn-mVb2pkkFX3LuqbsUH--8F1Qi5CQg",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/api/customer/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"customer",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update-customer",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"test dong 345\",\n    \"email\" : \"test5@test.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/customer/update/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"customer",
+						"update",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete-customer",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/customer/delete/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"customer",
+						"delete",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

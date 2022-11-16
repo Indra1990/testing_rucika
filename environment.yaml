@@ -1,0 +1,23 @@
+#   port: 8080
+
+# Bind service to address
+# listen_address: ""
+
+# mysql database config
+mysql:
+  host: "dbmysql"
+  port: "3306"
+  database: "db_bunchi"
+  user: "dev"
+  password: "dev"
+
+# Operation timeout in millis
+timeout: 6000
+
+secret_key_jwt: "tEstingDLUA99999"  
+secret_key_jwt_refresh: "tEstingDLUA99999rrrRR"  
+# Log file output, set empty value to output to stderr
+log: ""
+
+# Enable debugging output
+verbose: false
