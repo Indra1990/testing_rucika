@@ -86,7 +86,7 @@ func (c *AuthController) Login(ctx *gin.Context) {
 
 	atClaims := jwt.MapClaims{}
 	atClaims["customer_id"] = customer.ID
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+	atClaims["exp"] = time.Now().Add(time.Minute * 180).Unix()
 
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(key))
@@ -100,18 +100,25 @@ func (c *AuthController) Login(ctx *gin.Context) {
 
 	rtClaims := jwt.MapClaims{}
 	rtClaims["customer_id"] = customer.ID
-	rtClaims["exp"] = time.Now().Add(time.Minute * 30).Unix()
+	rtClaims["exp"] = time.Now().Add(time.Minute * 240).Unix()
 
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
-	rfToken, err := rt.SignedString([]byte(rfKey))
+	refToken, refTokenErr := rt.SignedString([]byte(rfKey))
+	if refTokenErr != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+			"result": "Invalid Request",
+			"error":  "Invalid login request",
+		})
+		return
+	}
 
 	data := map[string]string{
 		"acccessToken": token,
-		"refreshToken": rfToken,
+		"refreshToken": refToken,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"result": data,
+		"data": data,
 	})
 }
 

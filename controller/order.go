@@ -5,7 +5,6 @@ import (
 	"go-bun-chi/dto"
 	"go-bun-chi/entity"
 	"go-bun-chi/utils"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -64,9 +63,6 @@ func (c *OrderController) FindMany(ctx *gin.Context) {
 		endDateString = end.Format("2006-01-02") + " " + "23:59:00"
 	}
 
-	log.Println("startDate :", startDateString)
-	log.Println("endDate :", endDateString)
-
 	pagination := utils.GeneratePaginationFromRequest(ctx)
 	offset := (pagination.Page - 1) * pagination.Limit
 	var emptyArray = make([]string, 0)
@@ -117,11 +113,14 @@ func (c *OrderController) FindMany(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"result":     ordersDTO,
+	result := map[string]interface{}{
+		"data":       ordersDTO,
 		"totalRow":   totalRow,
 		"pagination": offset,
-	})
+	}
+
+	responseWithJson(ctx, http.StatusOK, "Success", "Find Many Order", result)
+
 }
 
 func (c *OrderController) Create(ctx *gin.Context) {
@@ -214,9 +213,7 @@ func (c *OrderController) Create(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"result": "Successfully Create Order",
-	})
+	responseWithJson(ctx, http.StatusOK, "Success", "Successfully Create Order", nil)
 }
 
 func (c *OrderController) FindById(ctx *gin.Context) {
@@ -249,9 +246,11 @@ func (c *OrderController) FindById(ctx *gin.Context) {
 	}
 
 	mapDTO := c.mapOrderDetailEntityToDTO(orderDet)
-	ctx.JSON(http.StatusOK, gin.H{
-		"result": mapDTO,
-	})
+	result := map[string]interface{}{
+		"data": mapDTO,
+	}
+
+	responseWithJson(ctx, http.StatusOK, "Success", "Find Detail Order", result)
 }
 
 func (c *OrderController) Updater(ctx *gin.Context) {
@@ -277,6 +276,8 @@ func (c *OrderController) Updater(ctx *gin.Context) {
 	}
 
 	var orderDetailEnt []entity.OrderDetails
+	var orderDetailEntCreUpd []entity.OrderDetails
+
 	var orderRequest dto.OrderCreateRequest
 	var totalHeader float64
 
@@ -294,6 +295,7 @@ func (c *OrderController) Updater(ctx *gin.Context) {
 	}
 
 	for _, vDet := range orderRequest.OrderDetailCreateRequest {
+
 		qty, qtyErr := strconv.ParseInt(vDet.Qty, 10, 64)
 		if qtyErr != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
@@ -312,39 +314,59 @@ func (c *OrderController) Updater(ctx *gin.Context) {
 			return
 		}
 
-		orderDetailEnt = append(orderDetailEnt, entity.OrderDetails{
-			Item:   vDet.Item,
-			Qty:    qty,
-			Price:  price,
-			Amount: float64(qty) * price,
-		})
+		if vDet.OrderDetailId != "" {
+			orderDetailId, orderDetailIdErr := strconv.ParseUint(vDet.OrderDetailId, 10, 64)
+			if orderDetailIdErr != nil {
+				ctx.JSON(http.StatusBadRequest, gin.H{
+					"result": "Invalid Request",
+					"error":  orderDetailIdErr.Error(),
+				})
+				return
+			}
+
+			orderDetailEnt = append(orderDetailEnt, entity.OrderDetails{
+				ID:     orderDetailId,
+				Item:   vDet.Item,
+				Qty:    qty,
+				Price:  price,
+				Amount: float64(qty) * price,
+			})
+		} else {
+			orderDetailEntCreUpd = append(orderDetailEntCreUpd, entity.OrderDetails{
+				OrderId: uint64(intParam),
+				Item:    vDet.Item,
+				Qty:     qty,
+				Price:   price,
+				Amount:  float64(qty) * price,
+			})
+		}
 
 		totalHeader += float64(qty) * price
 	}
 
-	var idDetails []int64
-	findErr := c.db.Model(&entity.OrderDetails{}).Where("order_id = ?", intParam).Pluck("id", &idDetails)
-	if findErr.Error != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"result": "Invalid Request",
-			"error":  findErr.Error.Error(),
-		})
-		return
-	}
-
-	var details entity.OrderDetails
 	transactionErr := c.db.Transaction(func(tx *gorm.DB) error {
 		headerUpdate.Total = totalHeader
 		if err := tx.Model(&entity.Orders{}).Where("id = ?", intParam).Updates(headerUpdate).Error; err != nil {
 			return err
 		}
 
-		for i, v := range orderDetailEnt {
-			updaDetail := tx.Model(&details).Where("id = ?", idDetails[i]).Updates(&entity.OrderDetails{
-				Item: v.Item, Qty: v.Qty, Price: v.Price, Amount: v.Amount}).Error
+		if len(orderDetailEntCreUpd) > 0 {
+			if err := tx.Model(&entity.OrderDetails{}).Create(&orderDetailEntCreUpd).Error; err != nil {
+				return err
+			}
+		}
 
-			if updaDetail != nil {
-				return updaDetail
+		if len(orderDetailEnt) > 0 {
+			for _, ordDet := range orderDetailEnt {
+				orderDetailModels := entity.OrderDetails{}
+				if err := tx.Model(&orderDetailModels).Where("id = ?", ordDet.ID).Updates(entity.OrderDetails{
+					Item:   ordDet.Item,
+					Qty:    ordDet.Qty,
+					Price:  ordDet.Price,
+					Amount: ordDet.Amount,
+				}).Error; err != nil {
+					return err
+				}
 			}
 		}
 		return nil
@@ -358,9 +380,7 @@ func (c *OrderController) Updater(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"result": "successfully order updated",
-	})
+	responseWithJson(ctx, http.StatusOK, "Success", "Successfully Order Updated", nil)
 }
 
 func (c *OrderController) Deleted(ctx *gin.Context) {
@@ -419,9 +439,8 @@ func (c *OrderController) Deleted(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"result": "successfully order deleted",
-	})
+	responseWithJson(ctx, http.StatusOK, "Success", "Successfully Order Deleted", nil)
+
 }
 
 func (c *OrderController) mapOrderDetailEntityToDTO(ents entity.Orders) dto.OrderFindIdDTO {

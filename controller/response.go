@@ -1,36 +1,35 @@
 package controller
 
 import (
-	"encoding/json"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-type responseCode struct {
-	Code int    `json:"code"`
-	Name string `json:"name"`
-	Desc string `json:"description"`
+type ResponseCode struct {
+	Code   int    `json:"code"`
+	Status string `json:"name"`
+	Desc   string `json:"description"`
 }
-type responseResult struct {
-	ResponseCode responseCode `json:"responseCode"`
+type ResponseResult struct {
+	ResponseCode ResponseCode `json:"responseCode"`
 	Result       interface{}  `json:"result"`
 }
-type responseWithResult struct {
+type ResponseWithResult struct {
 	ResponseWithResult interface{} `json:"responseWithResult"`
 }
 
-func responseWithJson(w http.ResponseWriter, code int, name string, desc string, result interface{}) {
-	response := responseWithResult{
-		responseResult{
-			ResponseCode: responseCode{
-				Code: code,
-				Name: name,
-				Desc: desc,
+func responseWithJson(ctx *gin.Context, code int, status string, desc string, result interface{}) {
+	response := ResponseWithResult{
+		ResponseResult{
+			ResponseCode: ResponseCode{
+				Code:   code,
+				Status: status,
+				Desc:   desc,
 			},
 			Result: result,
 		},
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(response)
+	ctx.JSON(http.StatusOK, response)
 }

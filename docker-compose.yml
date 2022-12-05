@@ -27,7 +27,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ~/mysql-local:/var/lib/mysql:z
+
   
 volumes:
   go-bun-chi:

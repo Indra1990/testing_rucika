@@ -27,20 +27,23 @@ func main() {
 
 	r := gin.Default()
 	r.POST("/login", authController.Login)
-	r.Use(authMiddleware(*authController, *customerController))
+
+	// authorize
+	authorized := r.Group("/api/")
+	authorized.Use(authMiddleware(*authController, *customerController))
 	{
 		// customer
-		r.GET("/api/customer", customerController.FindMany)
-		r.POST("/api/customer/create", customerController.Create)
-		r.GET("/api/customer/:customerId", customerController.FindById)
-		r.PUT("/api/customer/update/:customerId", customerController.Updater)
-		r.DELETE("/api/customer/delete/:customerId", customerController.Deleted)
+		authorized.GET("customer", customerController.FindMany)
+		authorized.POST("customer/create", customerController.Create)
+		authorized.GET("customer/:customerId", customerController.FindById)
+		authorized.PUT("customer/update/:customerId", customerController.Updater)
+		authorized.DELETE("customer/delete/:customerId", customerController.Deleted)
 		// order
-		r.GET("/api/order", orderController.FindMany)
-		r.POST("/api/order/create", orderController.Create)
-		r.GET("/api/order/:orderId", orderController.FindById)
-		r.PUT("/api/order/update/:orderId", orderController.Updater)
-		r.DELETE("/api/order/delete/:orderId", orderController.Deleted)
+		authorized.GET("order", orderController.FindMany)
+		authorized.POST("order/create", orderController.Create)
+		authorized.GET("order/:orderId", orderController.FindById)
+		authorized.PUT("order/update/:orderId", orderController.Updater)
+		authorized.DELETE("order/delete/:orderId", orderController.Deleted)
 
 	}
 

@@ -7,9 +7,10 @@ type OrderCreateRequest struct {
 }
 
 type OrderDetailCreateRequest struct {
-	Item  string `json:"item" validate:"required"`
-	Qty   string `json:"qty" validate:"required"`
-	Price string `json:"price" validate:"required"`
+	OrderDetailId string `json:"orderDetailId"`
+	Item          string `json:"item" validate:"required"`
+	Qty           string `json:"qty" validate:"required"`
+	Price         string `json:"price" validate:"required"`
 }
 
 type OrderFindManyDTO struct {
